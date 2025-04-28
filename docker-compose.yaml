@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   postgres:
     image: postgres:14
@@ -22,12 +24,12 @@ services:
       - redis_data:/data
 
   app:
-    build: 
+    build:
       context: ./backend
     container_name: app
     restart: always
     ports:
-      - '4000:4000'   # Changed to match your app's PORT in config.ts
+      - '4000:4000'
     depends_on:
       - postgres
       - redis
@@ -35,11 +37,24 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_USER: postgres
-      DB_PASS: postgres  
+      DB_PASS: postgres
       DB_NAME: comments_app
-      REDIS_URL: redis://redis:6379 
+      REDIS_URL: redis://redis:6379
       JWT_SECRET: token_top_secret
       PORT: 4000
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    restart: always
+    ports:
+      - '3000:3000'  # Update this to match the actual port (3000)
+    depends_on:
+      - app
+    environment:
+      - NODE_ENV=production
+      - VITE_API_URL=http://localhost:4000
 
 volumes:
   postgres_data:

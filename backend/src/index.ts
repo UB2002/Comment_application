@@ -5,8 +5,13 @@ import { sub } from "./redis";
 import { handleReplyCreated } from "./services/notifications";
 
 AppDataSource.initialize()
-  .then(() => console.log("Data Source initialized"))
-  .catch((err) => console.error("Data Source error", err));
+  .then(() => {
+    console.log('Data Source has been initialized!');
+  })
+  .catch((err) => {
+    console.error('Error during Data Source initialization:', err);
+    process.exit(1); // Exit the process if initialization fails
+  });
 
 sub.subscribe("reply_created", (_, msg) => {
   if (typeof msg === "string") {
